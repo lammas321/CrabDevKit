@@ -13,6 +13,7 @@ Due to the game being compiled with Il2Cpp, a majority of the functionality rega
 However, through some pointer magic, functionality for them has been restored to some degree!
 
 Due to the functionality being stripped, Unity appears to only be able to handle one Asset Bundle being loaded at any given time. So to allow assets from multiple Asset Bundles to be loaded at once, I dynamically load and unload 'loaded' Asset Bundles as mods interact with them.
+
 Because of this:
 - you may not load Asset Bundles asynchronously, to avoid loading multiple at once and breaking functionality, (if it's possible, I may implement more complex functionality to support this in the future, we'll see)
 - the game may momentarily freeze whenever it has to unload and load anther Asset Bundle,
@@ -22,7 +23,7 @@ Otherwise, Asset Bundles are fully supported via AssetBundlePtr!
 ```cs
 AssetBundlePtr bundle = AssetBundlePtr.LoadFromFile(bundlePath);
 
-// Can't type cast the returned value, must redefine it via its Pointer, weird Il2Cpp quirk.
+// Can't type cast the returned value, must redefine it via its Pointer, a Il2Cpp unhollowed quirk.
 UnityEngine.Object prefabObject = bundle.LoadAsset<GameObject>(prefabName);
 GameObject prefab = new GameObject(prefabObject.Pointer);
 ```
