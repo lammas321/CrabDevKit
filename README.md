@@ -57,7 +57,7 @@ packet.Write("Hello!");
 CrabNet.SendMessage($"{MyPluginInfo.PLUGIN_NAME}:Test", packet, GetAllSteamIds());
 
 // I would normally use a using statement, but Packet is an Il2Cpp unhollowed type and can't be used that way.
-// CrabNet.SendMessage also calls packet.Dispose() itself when it's done, but it's good practice to do this anyway!
+// CrabNet.SendMessage also calls packet.Dispose() itself when it's successfully sent the message, but it's good practice to do this anyway!
 packet.Dispose();
 ```
 
