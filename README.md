@@ -4,6 +4,7 @@ A BepInEx utility mod for Crab Game that improves the experience for mod makers.
 # Features
 ## Intermediary Namings
 Since Crab Game is obfuscated, the names of most types, fields, methods, etc have been changed to gibberish, making it difficult to tell what anything actually is, or what is real in the case of all of the generated garbage methods.
+
 Everything has been given a human readable name, so no more wondering what something is or which method is the one you want among all the garbage!
 Do note that since the game is compiled with Il2Cpp, this does not give you access to any source code, only the deobfuscated names of the obfuscated names ripped from the Il2Cpp Unhollower.
 
