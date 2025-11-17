@@ -64,5 +64,5 @@ packet.Dispose();
 Things to note with CrabNet:
 - You may only register messages after CrabDevKit has loaded, and before the game has started, so you should have your mod depend on CrabDevKit and register methods while your mod is loading!
 - Your message's identifier string is expected to contain a colon, which should separate your mod's name and the name of the message, in order to reduce the number of potential collisions caused by any mods using the same message identifiers.
-- It is up to you to ensure your server or client bound messages are being sent to, received by, rejected, or properly handled by the right users. Always ensure you're only sending server bound messages to the server, and that clients will reject server bound messages not intended for them.
-- In larger lobbies, due to the Steam networking issues detailed by FloatingPlayerPatch, messages you send client to client may not always reach eachother, though I don't recommend this style of communication anyway.
+- It is up to you to ensure your server and client bound messages are being sent to, received by, rejected, and properly handled by the right users. Always ensure you're only sending server bound messages to the server, and that clients will reject server bound messages not intended for them!
+- In larger lobbies, due to the Steam networking issues detailed by FloatingPlayerPatch, messages you send client to client may not always reach eachother, though I don't recommend this style of network communication anyway.
