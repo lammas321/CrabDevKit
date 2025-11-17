@@ -18,7 +18,7 @@ Due to the functionality being stripped, Unity appears to only be able to handle
 
 Because of this:
 - you may not load Asset Bundles asynchronously, to avoid loading multiple at once and breaking functionality, (if it's possible, I may implement more complex functionality to support this in the future, we'll see)
-- the game may momentarily freeze whenever it has to unload and load anther Asset Bundle,
+- the game may momentarily freeze whenever it has to unload and load another Asset Bundle,
 - mod makers may have to slightly change how they would normally use Asset Bundles, especially considering Il2Cpp may have stripped more niche uses of Asset Bundles I'm not aware of.
 
 Otherwise, Asset Bundles are fully supported via AssetBundlePtr!
