@@ -1,0 +1,89 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>CrabDevKit</AssemblyName>
+    <Version>1.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <DebugType>embedded</DebugType>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" PrivateAssets="all" Version="0.4.1" />
+    <PackageReference Include="BepInEx.IL2CPP" Version="6.0.0-*" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
+    <PackageReference Include="BepInEx.Preloader.Core" Version="6.0.0-*" />
+  </ItemGroup>
+
+  <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(OutDir)$(AssemblyName).dll&quot; &quot;S:\Steam\steamapps\common\Crab Game\BepInEx\plugins\$(AssemblyName).dll&quot;" />
+    <Exec Command="S:\Steam\steam.exe steam://rungameid/1782210" />
+  </Target>
+    
+  <ItemGroup>
+    <Reference Include="0Harmony" Publicize="true">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="Il2Cppmscorlib">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\Il2Cppmscorlib.dll</HintPath>
+    </Reference>
+	  <Reference Include="Il2CppSystem">
+		  <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\Il2CppSystem.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Il2CppSystem.Core">
+		  <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\Il2CppSystem.Core.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Unity.PostProcessing.Runtime">
+		  <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\Unity.PostProcessing.Runtime.dll</HintPath>
+	  </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule" Publicize="true">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+	  <Reference Include="UnityEngine.AnimationModule">
+		  <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.AnimationModule.dll</HintPath>
+	  </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+	  <Reference Include="UnityEngine.PhysicsModule">
+		  <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.PhysicsModule.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UnityEngine.TextRenderingModule">
+		  <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.TextRenderingModule.dll</HintPath>
+	  </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+	  <Reference Include="DissonanceVoip">
+		  <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\DissonanceVoip.dll</HintPath>
+	  </Reference>
+	  <Reference Include="ACTk.Runtime">
+		  <HintPath>S:\Steam\steamapps\common\Crab Game\BepInEx\unhollowed\ACTk.Runtime.dll</HintPath>
+	  </Reference>
+  </ItemGroup>
+</Project>
