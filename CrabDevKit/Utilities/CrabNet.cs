@@ -238,6 +238,7 @@ namespace CrabDevKit.Utilities
 
             [HarmonyPatch(typeof(SteamManager), nameof(SteamManager.Method_Private_Void_LobbyEnter_t_PDM_1))]
             [HarmonyPostfix]
+            [HarmonyPriority(int.MaxValue)]
             internal static void PostSteamManagerLobbyEnter(LobbyEnter_t param_1)
             {
                 if (LobbyManager.Instance.get_currentLobby().m_SteamID == param_1.m_ulSteamIDLobby)
