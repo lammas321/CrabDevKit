@@ -68,3 +68,33 @@ Things to note with CrabNet:
 - Your message's identifier string is expected to contain a colon, which should separate your mod's name and the name of the message, in order to reduce the number of potential collisions caused by any mods using the same message identifiers.
 - It is up to you to ensure your server and client bound messages are being sent to, received by, rejected, and properly handled by the right users. Always ensure you're only sending server bound messages to the server, and that clients will reject server bound messages not intended for them!
 - In larger lobbies, due to the Steam networking issues detailed by FloatingPlayerPatch, messages you send client to client may not always reach eachother, though I don't recommend this style of network communication anyway.
+
+## FakeClients
+A simple solution for simulating what it'd be like to do anything with more players than you have available. (Useful if you have no friends, or they just aren't available right when you need them xD)
+
+Here's a simple Harmony patch that will spawn and remove fake clients when pressing Left Alt+P or Left Alt+O as the host:
+```cs
+// Create/Remove FakeClients
+internal static List<FakeClient> fakeClients = [];
+[HarmonyPatch(typeof(PlayerInput), nameof(PlayerInput.Update))]
+[HarmonyPostfix]
+internal static void PostPlayerInputUpdate()
+{
+    if (!SteamManager.Instance.IsLobbyOwner() || !Input.GetKey(KeyCode.LeftAlt))
+        return;
+
+    if (Input.GetKeyDown(KeyCode.P))
+    {
+        CrabDevKit.Instance.Log.LogInfo("Creating fake player...");
+
+        fakeClients.Add(FakeClients.Create(forceSpawnActive: true));
+    }
+
+    if (Input.GetKeyDown(KeyCode.O))
+    {
+        CrabDevKit.Instance.Log.LogInfo("Removing fake player...");
+
+        FakeClients.Remove(fakeClients.LastOrDefault()?.clientId ?? 0ul);
+    }
+}
+```
