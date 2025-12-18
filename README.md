@@ -87,14 +87,20 @@ internal static void PostPlayerInputUpdate()
     {
         CrabDevKit.Instance.Log.LogInfo("Creating fake player...");
 
-        fakeClients.Add(FakeClients.Create(forceSpawnActive: true));
+        FakeClient fakeClient = FakeClients.Create(forceSpawnActive: true);
+        fakeClients.Add(fakeClient);
     }
 
     if (Input.GetKeyDown(KeyCode.O))
     {
+        FakeClient fakeClient = fakeClients.LastOrDefault();
+        if (fakeClient == null)
+          return;
+        
         CrabDevKit.Instance.Log.LogInfo("Removing fake player...");
 
-        FakeClients.Remove(fakeClients.LastOrDefault()?.clientId ?? 0ul);
+        FakeClients.Remove(fakeClient);
+        fakeClients.RemoveAt(fakeClients.Count - 1);
     }
 }
 ```
