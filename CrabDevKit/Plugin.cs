@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace CrabDevKit
 {
-    [BepInPlugin($"lammas123.{MyPluginInfo.PLUGIN_NAME}", MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     public sealed class CrabDevKit : BasePlugin
     {
         internal static CrabDevKit Instance { get; private set; }
