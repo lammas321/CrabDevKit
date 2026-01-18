@@ -1,6 +1,5 @@
 using BepInEx;
 using BepInEx.IL2CPP;
-//using CrabDevKit.Intermediary;
 using CrabDevKit.Utilities;
 using HarmonyLib;
 using System.Globalization;
@@ -24,8 +23,7 @@ namespace CrabDevKit
             Instance = this;
 
             CrabNet = new();
-
-            //CrabNet.RegisterMessageHandler($"{MyPluginInfo.PLUGIN_NAME}:Test", (clientId, packet) => { Log.LogInfo($"Test message from {clientId}: {packet.ReadString()}"); });
+            FakeClients.Init();
 
             Harmony harmony = new(MyPluginInfo.PLUGIN_NAME);
             harmony.PatchAll(typeof(Patches));

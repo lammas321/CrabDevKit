@@ -104,3 +104,10 @@ internal static void PostPlayerInputUpdate()
     }
 }
 ```
+
+## Other Utilities
+### ChatUtil
+Provides a couple methods for sending chat messages with better formatting.
+
+### GiveUtil
+Allows you to directly give vanilla players any item with any amount of ammo.
