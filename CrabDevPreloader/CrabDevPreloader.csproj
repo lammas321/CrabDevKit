@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<LangVersion>latest</LangVersion>
+
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<AssemblyName>lammas123.CrabDevPreloader</AssemblyName>
+		<Product>CrabDevPreloader</Product>
+		<Version>1.3.0</Version>
+
+		<SteamDir Condition="'$(SteamDir)' == ''">S:\Steam</SteamDir>
+		<ProfileDir Condition="'$(ProfileDir)' == ''">C:\Users\lamma\AppData\Roaming\r2modmanPlus-local\CrabGame\profiles\modded</ProfileDir>
+	</PropertyGroup>
+
+	<!-- Configurations -->
+	<PropertyGroup>
+		<Configurations>Debug;Release</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>embedded</DebugType>
+
+		<!-- Trim the path to just include the project in stack traces -->
+		<PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+
+		<AutoLaunch>true</AutoLaunch>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugSymbols>false</DebugSymbols>
+		<DebugType>none</DebugType>
+
+		<!-- Trim the path to just include the project in stack traces -->
+		<PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+
+		<AutoLaunch>false</AutoLaunch>
+	</PropertyGroup>
+
+
+	<!-- Building -->
+	<Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
+		<ItemGroup>
+			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="AutoLaunch" AfterTargets="PostBuildEvent" Condition="'$(AutoLaunch)' == 'true'">
+		<Exec Command="copy &quot;$(OutDir)$(AssemblyName).dll&quot; &quot;$(ProfileDir)\BepInEx\patchers\$(AssemblyName)\$(AssemblyName).dll&quot;" />
+		<Exec Command="$(SteamDir)\steam.exe steam://rungameid/1782210" />
+	</Target>
+
+	<Target Name="Thunderstore" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+		<Exec Command="copy &quot;$(OutDir)$(AssemblyName).dll&quot; &quot;$(MSBuildProjectDirectory)\..\CrabDevKit\Thunderstore\CrabDevKit\BepInEx\patchers\$(AssemblyName).dll&quot;" Condition="Exists('$(MSBuildProjectDirectory)\..\CrabDevKit\Thunderstore\CrabDevKit\BepInEx\patchers')" />
+		<Warning Condition="!Exists('$(MSBuildProjectDirectory)\..\CrabDevKit\Thunderstore\CrabDevKit\BepInEx\patchers')" Text="The Thunderstore directory $(MSBuildProjectDirectory)\..\CrabDevKit\Thunderstore\CrabDevKit\BepInEx\patchers does not exist." />
+	</Target>
+
+
+	<!-- Dependencies -->
+	<ItemGroup>
+		<PackageReference Include="Mono.Cecil" Version="0.11.6" />
+		<PackageReference Include="MonoMod" Version="22.7.31.1" />
+
+		<PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
+		
+		<Reference Include="BepInEx.Core">
+			<HintPath>$(ProfileDir)\BepInEx\core\BepInEx.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.Preloader.Core">
+			<HintPath>$(ProfileDir)\BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+</Project>

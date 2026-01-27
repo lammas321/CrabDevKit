@@ -13,9 +13,10 @@ namespace CrabDevKit.Utilities
     // For this reason, you CANNOT do anything asynchronously:
     // - Because of only allowing one bundle to be loaded at any given time, having async means multiple bundles *could* be loaded at once, leading to issues.
     // - Attempting to load multiple bundles at once via coroutines and async methods will just lead to bundles repeatedly being loaded and unloaded as I have to switch the currently loaded bundle constantly, just leading to worse user experience.
-    
+
     // Streams are also just weird in Il2Cpp from last I tried making them work, so I just ignored them here.
 
+    [Obsolete("CrabDevKit.Utilities.AssetBundlePtr will be removed in the future! A way to properly fix Asset Bundles was found, making this obsolete.")]
     public sealed class AssetBundlePtr : IDisposable
     {
         internal IntPtr bundlePtr;

@@ -11,10 +11,10 @@
 	<PropertyGroup>
 		<AssemblyName>lammas123.CrabDevKit</AssemblyName>
 		<Product>CrabDevKit</Product>
-		<Version>1.2.1</Version>
+		<Version>1.3.0</Version>
 
 		<SteamDir Condition="'$(SteamDir)' == ''">S:\Steam</SteamDir>
-		<ProfileDir Condition="'$(ProfileDir)' == ''">S:\Steam\steamapps\common\Crab Game</ProfileDir>
+		<ProfileDir Condition="'$(ProfileDir)' == ''">C:\Users\lamma\AppData\Roaming\r2modmanPlus-local\CrabGame\profiles\modded</ProfileDir>
 		<UnhollowedDir>$(ProfileDir)\BepInEx\unhollowed</UnhollowedDir>
 	</PropertyGroup>
 
@@ -105,7 +105,7 @@
 		<Reference Include="ACTk.Runtime">
 			<HintPath>$(UnhollowedDir)\ACTk.Runtime.dll</HintPath>
 		</Reference>
-		<Reference Include="DissonanceVoip">
+		<Reference Include="DissonanceVoip" Publicize="true">
 			<HintPath>$(UnhollowedDir)\DissonanceVoip.dll</HintPath>
 		</Reference>
 
