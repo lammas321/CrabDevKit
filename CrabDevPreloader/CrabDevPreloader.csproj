@@ -11,7 +11,7 @@
 	<PropertyGroup>
 		<AssemblyName>lammas123.CrabDevPreloader</AssemblyName>
 		<Product>CrabDevPreloader</Product>
-		<Version>1.3.0</Version>
+		<Version>1.3.1</Version>
 
 		<SteamDir Condition="'$(SteamDir)' == ''">S:\Steam</SteamDir>
 		<ProfileDir Condition="'$(ProfileDir)' == ''">C:\Users\lamma\AppData\Roaming\r2modmanPlus-local\CrabGame\profiles\modded</ProfileDir>
@@ -63,11 +63,17 @@
 
 	<!-- Dependencies -->
 	<ItemGroup>
-		<PackageReference Include="Mono.Cecil" Version="0.11.6" />
+		<PackageReference Include="Mono.Cecil" Version="0.11.4" />
 		<PackageReference Include="MonoMod" Version="22.7.31.1" />
 
 		<PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
-		
+
+		<Reference Include="0Harmony">
+			<HintPath>$(ProfileDir)\BepInEx\core\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.IL2CPP">
+			<HintPath>$(ProfileDir)\BepInEx\core\BepInEx.IL2CPP.dll</HintPath>
+		</Reference>
 		<Reference Include="BepInEx.Core">
 			<HintPath>$(ProfileDir)\BepInEx\core\BepInEx.Core.dll</HintPath>
 		</Reference>

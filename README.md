@@ -13,6 +13,12 @@ A preloader (BepInEx/patchers) packaged with CrabDevKit for general purpose fixe
 ### Asset Bundle Patch
 The class for Asset Bundles isn't properly unhollowed by the unhollower, leading to it not inheriting from Il2CppObjectBase and missing a constructor that takes in an IntPtr. This results in any attempt to load an Asset Bundle throwing exceptions and just not working. This was partially fixed in the past with Asset Bundle Ptr (avoiding calling the constructor by directly working with the IntPtr and never contructing Asset Bundle, though you couldn't load more than 1 at once) but this is no longer necessary! CrabDevPreloader will force Asset Bundle to inherit Il2CppObjectBase and give it the missing constructor, allowing Asset Bundles to be used as they normally would in any other Unity game!
 
+### DetourFailures
+Detouring can VERY rarely, but occasionally fail randomly depending on how your memory (RAM) is allocated at the time when you run the game. When it fails, it leads to most, if not all mods that use Harmony bugging out and a very broken game state.
+
+To help rectify this, CrabDevKit's preloader will now patch the method that catches and warns about the exceptions and record the failures. If any failures do occur, you will be immediately alerted on the main menu once the game starts up about them via prompt and how to rectify them. The easiest way to do so is by restarting your computer, as it will clear up memory for allocating patches.
+- Though less common, it will also show these prompts if these failures occur during gameplay.
+
 ## CrabNet
 A simple networking solution (utilizing channel 123 of SteamNetworkingMessages) to allow mod makers to register and send custom messages between users of CrabDevKit through their mods.
 

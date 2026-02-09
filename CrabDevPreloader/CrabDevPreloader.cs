@@ -1,26 +1,48 @@
 ﻿using BepInEx;
+using BepInEx.IL2CPP.Hook;
 using BepInEx.Preloader.Core.Patching;
+using HarmonyLib;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
+using MonoOpCodes = Mono.Cecil.Cil.OpCodes;
+using SystemOpCodes = System.Reflection.Emit.OpCodes;
 
 namespace CrabDevPreloader
 {
     [PatcherPluginInfo(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     public sealed class CrabDevPreloader : BasePatcher
     {
+        internal static CrabDevPreloader Instance { get; private set; }
+
         private AssemblyDefinition _unhollowerBaseLibAssembly;
         private TypeReference _il2CppObjectBaseRef;
 
         public override void Initialize()
         {
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
+            Instance = this;
+
             _unhollowerBaseLibAssembly = AssemblyDefinition.ReadAssembly(Path.Combine(Paths.BepInExRootPath, "core", "UnhollowerBaseLib.dll"));
             var il2CppObjectBaseType = _unhollowerBaseLibAssembly.MainModule.GetType("UnhollowerBaseLib.Il2CppObjectBase");
             _il2CppObjectBaseRef = _unhollowerBaseLibAssembly.MainModule.ImportReference(il2CppObjectBaseType);
 
-            Log.LogInfo("Initialized");
+            Log.LogInfo("Applying Harmony patches...");
+            
+            Harmony harmony = new(MyPluginInfo.PLUGIN_NAME);
+            harmony.PatchAll(typeof(CrabDevPreloader));
+
+            Log.LogInfo($"Initialized [{MyPluginInfo.PLUGIN_NAME} {MyPluginInfo.PLUGIN_VERSION}]");
         }
+
 
         [TargetType("UnityEngine.AssetBundleModule.dll", "UnityEngine.AssetBundle")]
         public void PatchAssetBundle(TypeDefinition assetBundleType)
@@ -65,13 +87,44 @@ namespace CrabDevPreloader
                 m.Parameters.Count == 1 &&
                 m.Parameters[0].ParameterType.FullName == "System.IntPtr");
 
-            il.Append(il.Create(OpCodes.Ldarg_0));          // this
-            il.Append(il.Create(OpCodes.Ldarg_1));          // ptr argument
-            il.Append(il.Create(OpCodes.Call, assetBundleType.Module.ImportReference(baseCtor))); // call base ctor
-            il.Append(il.Create(OpCodes.Ret));              // return
+            il.Append(il.Create(MonoOpCodes.Ldarg_0));          // this
+            il.Append(il.Create(MonoOpCodes.Ldarg_1));          // ptr argument
+            il.Append(il.Create(MonoOpCodes.Call, assetBundleType.Module.ImportReference(baseCtor))); // call base ctor
+            il.Append(il.Create(MonoOpCodes.Ret));              // return
 
             assetBundleType.Methods.Add(ctor);
             Log.LogInfo("Injected AssetBundle(IntPtr) constructor");
+        }
+
+        
+        [HarmonyPatch(typeof(IL2CPPDetourMethodPatcher), "Init")]
+        [HarmonyTranspiler]
+        internal static IEnumerable<CodeInstruction> TranspileIL2CPPDetourMethodPatcherInit(IEnumerable<CodeInstruction> instructions)
+        {
+            List<CodeInstruction> codes = [.. instructions];
+
+            bool injected = false;
+
+            for (int i = 0; i < codes.Count; i++)
+            {
+                CodeInstruction code = codes[i];
+                yield return code;
+
+                // Look for: stloc.s (Exception ex)
+                if (injected || code.opcode != SystemOpCodes.Stloc_S || code.operand is not LocalBuilder local || local.LocalIndex != 5 || local.LocalType != typeof(Exception))
+                    continue;
+
+                // Inject after storing ex
+                yield return new CodeInstruction(SystemOpCodes.Ldloc_S, local); // load ex
+                yield return new CodeInstruction(SystemOpCodes.Ldarg_0);        // load this
+                yield return CodeInstruction.Call(typeof(DetourFailures), nameof(DetourFailures.Record));
+
+                Instance.Log.LogInfo("Transpiled DetourFailures.Record after IL2CPPDetourMethodPatcher.Init's catch(Exception ex).");
+                injected = true;
+            }
+
+            if (!injected)
+                Instance.Log.LogWarning("Failed to transpile DetourFailures.Record after IL2CPPDetourMethodPatcher.Init's catch(Exception ex)!");
         }
     }
 }

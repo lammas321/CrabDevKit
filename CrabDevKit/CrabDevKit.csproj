@@ -11,11 +11,12 @@
 	<PropertyGroup>
 		<AssemblyName>lammas123.CrabDevKit</AssemblyName>
 		<Product>CrabDevKit</Product>
-		<Version>1.3.0</Version>
+		<Version>1.3.1</Version>
 
 		<SteamDir Condition="'$(SteamDir)' == ''">S:\Steam</SteamDir>
 		<ProfileDir Condition="'$(ProfileDir)' == ''">C:\Users\lamma\AppData\Roaming\r2modmanPlus-local\CrabGame\profiles\modded</ProfileDir>
 		<UnhollowedDir>$(ProfileDir)\BepInEx\unhollowed</UnhollowedDir>
+		<DepsDir Condition="'$(DepsDir)' == ''">C:\Users\lamma\source\repos\Crab Game</DepsDir>
 	</PropertyGroup>
 
 
@@ -48,6 +49,10 @@
 	<!-- Checks -->
 	<Target Name="CheckUnhollowed" BeforeTargets="ResolveAssemblyReferences">
 		<Error Condition="!Exists('$(UnhollowedDir)\Assembly-CSharp.dll')" Text="Unhollowed assemblies not found. Verify $(UnhollowedDir) (your .csproj's UnhollowedDir) is correct and run BepInEx Il2Cpp unhollowing first." />
+	</Target>
+
+	<Target Name="CheckDeps" BeforeTargets="ResolveAssemblyReferences" Condition="'$(DepsDir)' != ''">
+		<Error Condition="!Exists('$(DepsDir)')" Text="$(DepsDir) does not exist, correct your DepsDir within your .csproj." />
 	</Target>
 
 
@@ -118,6 +123,11 @@
 		</Reference>
 		<Reference Include="Il2CppSystem.Core">
 			<HintPath>$(UnhollowedDir)\Il2CppSystem.Core.dll</HintPath>
+		</Reference>
+
+		<!-- Preloader Assembly -->
+		<Reference Include="CrabDevPreloader">
+			<HintPath>$(DepsDir)\CrabDevPreloader\bin\Release\netstandard2.1\lammas123.CrabDevPreloader.dll</HintPath>
 		</Reference>
 
 		<!-- Unity Assemblies-->

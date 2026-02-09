@@ -11,5 +11,14 @@ namespace CrabDevKit
         [HarmonyPrefix]
         internal static bool PreBepinexDetection()
             => false;
+
+
+        // Slight optimization, disable TMPro warnings
+        [HarmonyPatch(typeof(MainManager), nameof(MainManager.Awake))]
+        [HarmonyPostfix]
+        internal static void PostMainManagerAwake()
+        {
+            TMPro.TMP_Settings.instance.m_warningsDisabled = true;
+        }
     }
 }
