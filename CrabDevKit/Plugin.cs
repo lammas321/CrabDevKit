@@ -1,6 +1,7 @@
 using BepInEx;
 using BepInEx.IL2CPP;
 using CrabDevKit.Utilities;
+using CrabDevKit.Utilities.CrabUi;
 using HarmonyLib;
 using System.Globalization;
 using UnityEngine.Events;
@@ -26,6 +27,9 @@ namespace CrabDevKit
 
             CrabNet = new();
             FakeClients.Init();
+
+            CommonUi.Init();
+            UiComponents.Init();
 
             Harmony harmony = new(MyPluginInfo.PLUGIN_NAME);
             harmony.PatchAll(typeof(Patches));
