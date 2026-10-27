@@ -13,12 +13,15 @@ namespace CrabDevKit
             => false;
 
 
-        // Slight optimization, disable TMPro warnings
         [HarmonyPatch(typeof(MainManager), nameof(MainManager.Awake))]
         [HarmonyPostfix]
         internal static void PostMainManagerAwake()
         {
-            TMPro.TMP_Settings.instance.m_warningsDisabled = true;
+            CrabDevPreloader.DetourFailures.FailureRecorded -= CrabDevKit.Instance.PromptDetourFailures;
+            CrabDevPreloader.DetourFailures.FailureRecorded += CrabDevKit.Instance.PromptDetourFailures;
+
+            if (CrabDevPreloader.DetourFailures.failures.Count != 0)
+                CrabDevKit.Instance.PromptDetourFailures();
         }
     }
 }

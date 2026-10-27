@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<LangVersion>latest</LangVersion>
@@ -11,10 +11,12 @@
 	<PropertyGroup>
 		<AssemblyName>lammas123.CrabDevPreloader</AssemblyName>
 		<Product>CrabDevPreloader</Product>
-		<Version>1.3.2</Version>
+		<Version>1.4.0</Version>
 
-		<SteamDir Condition="'$(SteamDir)' == ''">S:\Steam</SteamDir>
-		<ProfileDir Condition="'$(ProfileDir)' == ''">C:\Users\lamma\AppData\Roaming\r2modmanPlus-local\CrabGame\profiles\modded</ProfileDir>
+		<AutoLaunchDir Condition="'$(AutoLaunchDir)' == ''">lammas123-CrabDevKit</AutoLaunchDir>
+		<SteamPath Condition="'$(SteamPath)' == ''">S:/Steam/steam.exe</SteamPath>
+
+		<ProfileDir Condition="'$(ProfileDir)' == ''">C:/Users/lamma/AppData/Roaming/r2modmanPlus-local/CrabGame/profiles/modded</ProfileDir>
 	</PropertyGroup>
 
 	<!-- Configurations -->
@@ -50,14 +52,24 @@
 		</ItemGroup>
 	</Target>
 
-	<Target Name="AutoLaunch" AfterTargets="PostBuildEvent" Condition="'$(AutoLaunch)' == 'true'">
-		<Exec Command="copy &quot;$(OutDir)$(AssemblyName).dll&quot; &quot;$(ProfileDir)\BepInEx\patchers\$(AssemblyName)\$(AssemblyName).dll&quot;" />
-		<Exec Command="$(SteamDir)\steam.exe steam://rungameid/1782210" />
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(AutoLaunch)' == 'true'">
+		<MakeDir Directories="$(ProfileDir)/BepInEx/patchers/$(AutoLaunchDir)" Condition="!Exists('$(ProfileDir)/BepInEx/patchers/$(AutoLaunchDir)')" />
+
+		<Copy SourceFiles="$(OutDir)$(AssemblyName).dll"
+			  DestinationFiles="$(ProfileDir)/BepInEx/patchers/$(AutoLaunchDir)/$(AssemblyName).dll"
+			  SkipUnchangedFiles="true" />
+
+		<Exec Command="$(SteamPath) steam://rungameid/1782210" Condition="Exists('$(SteamPath)')" />
+		<Warning Condition="!Exists('$(SteamPath)')" Text="The Steam path $(SteamPath) does not exist." />
 	</Target>
 
 	<Target Name="Thunderstore" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
-		<Exec Command="copy &quot;$(OutDir)$(AssemblyName).dll&quot; &quot;$(MSBuildProjectDirectory)\..\CrabDevKit\Thunderstore\CrabDevKit\BepInEx\patchers\$(AssemblyName).dll&quot;" Condition="Exists('$(MSBuildProjectDirectory)\..\CrabDevKit\Thunderstore\CrabDevKit\BepInEx\patchers')" />
-		<Warning Condition="!Exists('$(MSBuildProjectDirectory)\..\CrabDevKit\Thunderstore\CrabDevKit\BepInEx\patchers')" Text="The Thunderstore directory $(MSBuildProjectDirectory)\..\CrabDevKit\Thunderstore\CrabDevKit\BepInEx\patchers does not exist." />
+		<Copy SourceFiles="$(OutDir)$(AssemblyName).dll"
+		      DestinationFiles="$(MSBuildProjectDirectory)/../CrabDevKit/Thunderstore/CrabDevKit/BepInEx/patchers/$(AssemblyName).dll"
+			  Condition="Exists('$(MSBuildProjectDirectory)/../CrabDevKit/Thunderstore/CrabDevKit/BepInEx/patchers')"
+			  SkipUnchangedFiles="true" />
+
+		<Warning Condition="!Exists('$(MSBuildProjectDirectory)/../CrabDevKit/Thunderstore/CrabDevKit/BepInEx/patchers')" Text="The Thunderstore directory $(MSBuildProjectDirectory)/../CrabDevKit/Thunderstore/CrabDevKit/BepInEx/patchers does not exist." />
 	</Target>
 
 
@@ -67,18 +79,21 @@
 		<PackageReference Include="MonoMod" Version="22.7.31.1" />
 
 		<PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<!-- BepInEx Assemblies -->
 		<Reference Include="0Harmony">
-			<HintPath>$(ProfileDir)\BepInEx\core\0Harmony.dll</HintPath>
+			<HintPath>$(ProfileDir)/BepInEx/core/0Harmony.dll</HintPath>
 		</Reference>
 		<Reference Include="BepInEx.IL2CPP">
-			<HintPath>$(ProfileDir)\BepInEx\core\BepInEx.IL2CPP.dll</HintPath>
+			<HintPath>$(ProfileDir)/BepInEx/core/BepInEx.IL2CPP.dll</HintPath>
 		</Reference>
 		<Reference Include="BepInEx.Core">
-			<HintPath>$(ProfileDir)\BepInEx\core\BepInEx.Core.dll</HintPath>
+			<HintPath>$(ProfileDir)/BepInEx/core/BepInEx.Core.dll</HintPath>
 		</Reference>
 		<Reference Include="BepInEx.Preloader.Core">
-			<HintPath>$(ProfileDir)\BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
+			<HintPath>$(ProfileDir)/BepInEx/core/BepInEx.Preloader.Core.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 </Project>

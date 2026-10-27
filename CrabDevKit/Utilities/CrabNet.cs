@@ -17,6 +17,7 @@ namespace CrabDevKit.Utilities
         private readonly Dictionary<string, uint> _registeredMessageHandlers = [];
         private readonly Dictionary<uint, MessageHandler> _messageHandlers = [];
 
+        private const string ProtocolVersion = "1";
         private const int SendFlag = 8;
         private const int MessageChannel = 123;
         private const int MessagesPerFrame = 70;
@@ -81,6 +82,7 @@ namespace CrabDevKit.Utilities
             CSteamID lobbyId = LobbyManager.Instance.get_currentLobby();
 
             SteamMatchmaking.SetLobbyMemberData(lobbyId, "CrabNetVersion", MyPluginInfo.PLUGIN_VERSION);
+            SteamMatchmaking.SetLobbyMemberData(lobbyId, "CrabNetProtocol", ProtocolVersion);
             foreach ((string messageId, uint id) in _registeredMessageHandlers)
                 SteamMatchmaking.SetLobbyMemberData(lobbyId, $"CrabNet:Message.{id}", messageId);
 
@@ -151,6 +153,13 @@ namespace CrabDevKit.Utilities
                     continue;
                 }
 
+                string protocolVersion = SteamMatchmaking.GetLobbyMemberData(LobbyManager.Instance.get_currentLobby(), steamId, "CrabNetProtocol");
+                if (!string.IsNullOrEmpty(protocolVersion) && protocolVersion != ProtocolVersion)
+                {
+                    CrabDevKit.Instance.Log.LogWarning($"{steamId.m_SteamID} is using a different CrabNet protocol than you, and cannot receive messages! {protocolVersion} (THEM) != {ProtocolVersion} (YOU)");
+                    continue;
+                }
+
                 if (steamId == SteamUser.GetSteamID())
                 {
                     Packet readPacket = new(sendPacket.CloneBytes());
@@ -184,6 +193,19 @@ namespace CrabDevKit.Utilities
 
         private void HandleMessage(ulong clientId, Packet packet)
         {
+            if (string.IsNullOrEmpty(SteamMatchmaking.GetLobbyMemberData(LobbyManager.Instance.get_currentLobby(), new(clientId), "CrabNetVersion")))
+            {
+                CrabDevKit.Instance.Log.LogWarning($"{clientId} does not have CrabNet, you cannot handle their message!");
+                return;
+            }
+
+            string protocolVersion = SteamMatchmaking.GetLobbyMemberData(LobbyManager.Instance.get_currentLobby(), new(clientId), "CrabNetProtocol");
+            if (!string.IsNullOrEmpty(protocolVersion) && protocolVersion != ProtocolVersion)
+            {
+                CrabDevKit.Instance.Log.LogWarning($"{clientId} is using a different CrabNet protocol than you, you cannot handle their message! {protocolVersion} (THEM) != {ProtocolVersion} (YOU)");
+                return;
+            }
+
             try
             {
                 uint id = (uint)packet.ReadInt();
